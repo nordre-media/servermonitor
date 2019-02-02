@@ -1,4 +1,5 @@
-./Minecraft\Plugins\servermonitor\.gradle
-./Minecraft\Plugins\servermonitor\build
-./Minecraft\Plugins\servermonitor\.idea
-./Minecraft\Plugins\servermonitor\paper
+Minecraft/Plugins/servermonitor/paper
+Minecraft/Plugins/servermonitor/build
+Minecraft/Plugins/servermonitor/.idea
+Minecraft/Plugins/servermonitor/.gradle
+Minecraft/Plugins/servermonitor/gradle
