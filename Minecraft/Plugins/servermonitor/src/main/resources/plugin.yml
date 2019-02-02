@@ -1,0 +1,50 @@
+name: Monitor
+main: party.rezruel.servermonitor.Monitor
+version: ${full.version}
+description: "Sends stats to Discord over webhooks"
+author: Rezruel
+api-version: 1.12
+commands:
+  log:
+    description: Sends a log message to Discord
+    usage: /<command>
+    permission: <plugin name>.log
+    permission-message: You don't have <permission>
+  config:
+    description: Gets or sets a config key to a value
+    usage: /<command> [set] <key> [value]
+    permission: <plugin name>.config
+    permission-message: You don't have <permission>
+  schedulerestart:
+    description: Schedules a reload
+    usage: /<command> XwXdXhXmXs
+    permission: <plugin name>.schedulerestart
+    permission-message: You don't have <permission>
+    aliases:
+      - schedulerestart
+      - msr
+      - sr
+permissions:
+  monitor.*:
+    description: Gives access to all monitor permissions and commands
+    children:
+      monitor.log: true
+      monitor.config: true
+      monitor.reload: true
+      monitor.schedulerestart: true
+      monitor.downloadplugin: false
+  monitor.log:
+    description: Allows you to send a stats log to Discord pre-emptively
+    default: op
+  monitor.config:
+    description: Allows you to view or set configuration options. This is extremely dangerous to grant to others and should ideally not be used.
+    default: false
+  monitor.reload:
+    description: Allows reload this plugin
+    default: op
+  monitor.schedulerestart:
+    description: Allows scheduling a server restart
+    default: false
+  monitor.downloadplugin:
+    description: Allows downloading plugins directly to the plugin folder
+    default: false
