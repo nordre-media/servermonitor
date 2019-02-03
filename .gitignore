@@ -3,3 +3,5 @@ Minecraft/Plugins/servermonitor/build
 Minecraft/Plugins/servermonitor/.idea
 Minecraft/Plugins/servermonitor/.gradle
 Minecraft/Plugins/servermonitor/gradle
+/.idea
+/Spillkveld.iml
