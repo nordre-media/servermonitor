@@ -1,7 +1,6 @@
 package party.rezruel.servermonitor
 
 import co.aikar.commands.PaperCommandManager
-import com.google.common.collect.ImmutableList
 import net.dv8tion.jda.core.EmbedBuilder
 import net.dv8tion.jda.core.entities.MessageEmbed
 import net.dv8tion.jda.webhook.WebhookClient
@@ -31,19 +30,6 @@ class Monitor : JavaPlugin() {
         }
     }
 
-//    private val worldCoroutine by lazy {
-//        GlobalScope.launch {
-//            while (this@Monitor.isEnabled) {
-//                delay(this@Monitor.config["world_save_interval"].toString().toLong() * 1000 * 60)
-//                for (world in this@Monitor.server.worlds) {
-//                    world.save()
-//                    this@Monitor.server.broadcastMessage("Saving ${world.name}...")
-//                }
-//                this@Monitor.server.broadcastMessage("Saved all worlds.")
-//            }
-//        }
-//    }
-
     private val statsCoroutine by lazy {
         thread(false, true) {
             while (this@Monitor.isEnabled) {
@@ -60,12 +46,12 @@ class Monitor : JavaPlugin() {
             WebhookClientBuilder(this.config.getString("webhook")).build()
         } catch (exception: IllegalArgumentException) {
             throw RuntimeException(
-                "No configured webhook url for ${this.name}. " +
-                        "Please configure one (Copy and paste webhook url from Discord) " +
-                        "into the config.yml like: " +
-                        "webhook: \"https://discordapp.com/api/webhooks/000000000000000000" +
-                        "/aduhgawduih_adygd2ugy1dib_cg8g12d679gagsdybvd87\"\n" +
-                        "${exception.cause}\n${exception.message}\n${exception.printStackTrace()}"
+                    "No configured webhook url for ${this.name}. " +
+                            "Please configure one (Copy and paste webhook url from Discord) " +
+                            "into the config.yml like: " +
+                            "webhook: \"https://discordapp.com/api/webhooks/000000000000000000" +
+                            "/aduhgawduih_adygd2ugy1dib_cg8g12d679gagsdybvd87\"\n" +
+                            "${exception.cause}\n${exception.message}\n${exception.printStackTrace()}"
             )
 
         }
@@ -76,12 +62,12 @@ class Monitor : JavaPlugin() {
             WebhookClientBuilder(this.config.getString("discord_chat_webhook")).build()
         } catch (exception: IllegalArgumentException) {
             throw RuntimeException(
-                "No configured chat webhook url for ${this.name}. " +
-                        "Please configure one (Copy and paste webhook url from Discord) " +
-                        "into the config.yaml like:" +
-                        "discord_chat_webhook: \"https://discordapp.com/api/webhooks/000000000000000000" +
-                        "/aduhgawduih_adygd2ugy1dib_cg8g12d679gagsdybvd87\"\n" +
-                        "${exception.cause}\n${exception.message}\n${exception.printStackTrace()}"
+                    "No configured chat webhook url for ${this.name}. " +
+                            "Please configure one (Copy and paste webhook url from Discord) " +
+                            "into the config.yaml like:" +
+                            "discord_chat_webhook: \"https://discordapp.com/api/webhooks/000000000000000000" +
+                            "/aduhgawduih_adygd2ugy1dib_cg8g12d679gagsdybvd87\"\n" +
+                            "${exception.cause}\n${exception.message}\n${exception.printStackTrace()}"
             )
         }
     }
@@ -92,13 +78,13 @@ class Monitor : JavaPlugin() {
 
     fun sendStatsToDiscord(author: String? = null) {
         this.webhook.send(
-            WebhookMessageBuilder()
-                .addEmbeds(
-                    listOf(this.statsToEmbed())
-                )
-                .setContent(
-                    if (author != null) "Stats sent early by: $author" else "Stats sent early by an unknown author"
-                ).build()
+                WebhookMessageBuilder()
+                        .addEmbeds(
+                                listOf(this.statsToEmbed())
+                        )
+                        .setContent(
+                                if (author != null) "Stats sent early by: $author" else "Stats sent early by an unknown author"
+                        ).build()
         )
     }
 
@@ -117,18 +103,18 @@ class Monitor : JavaPlugin() {
         server.operators.forEach { operatorNameAndIds.add("${it.name}(${it.uniqueId})\n") }
 
         return mapOf(
-            ServerStatsEnum.ONLINE_PLAYERS to onlinePlayers,
-            ServerStatsEnum.OFFLINE_PLAYERS to offlinePlayers,
-            ServerStatsEnum.TPS to tpsLastMinute,
-            ServerStatsEnum.SERVER_NAME to serverName,
-            ServerStatsEnum.BAN_COUNT to bannedPlayerCount,
-            ServerStatsEnum.MAX_PLAYERS to maxPlayers,
-            ServerStatsEnum.OPERATOR_COUNT to operators,
-            ServerStatsEnum.OPERATORS to operatorNameAndIds
+                ServerStatsEnum.ONLINE_PLAYERS to onlinePlayers,
+                ServerStatsEnum.OFFLINE_PLAYERS to offlinePlayers,
+                ServerStatsEnum.TPS to tpsLastMinute,
+                ServerStatsEnum.SERVER_NAME to serverName,
+                ServerStatsEnum.BAN_COUNT to bannedPlayerCount,
+                ServerStatsEnum.MAX_PLAYERS to maxPlayers,
+                ServerStatsEnum.OPERATOR_COUNT to operators,
+                ServerStatsEnum.OPERATORS to operatorNameAndIds
         )
     }
 
-    fun runtimeStatsMap(): Map<RuntimeStatsEnum, Long> {
+    private fun runtimeStatsMap(): Map<RuntimeStatsEnum, Long> {
 
         val runtime = Runtime.getRuntime()
         val maxMemory = runtime.maxMemory() / 1024 / 1024
@@ -137,10 +123,10 @@ class Monitor : JavaPlugin() {
         val usedMemory = totalMemory - freeMemory
 
         return mapOf(
-            RuntimeStatsEnum.MAX_MEMORY to maxMemory,
-            RuntimeStatsEnum.FREE_MEMORY to freeMemory,
-            RuntimeStatsEnum.TOTAL_MEMORY to totalMemory,
-            RuntimeStatsEnum.USED_MEMORY to usedMemory
+                RuntimeStatsEnum.MAX_MEMORY to maxMemory,
+                RuntimeStatsEnum.FREE_MEMORY to freeMemory,
+                RuntimeStatsEnum.TOTAL_MEMORY to totalMemory,
+                RuntimeStatsEnum.USED_MEMORY to usedMemory
         )
     }
 
@@ -159,10 +145,10 @@ class Monitor : JavaPlugin() {
         val upTimeSince = Instant.now().minusMillis(upTimeMillis).atZone(ZoneId.of("CET"))
 
         return mapOf(
-            OsStatsEnum.AVAILABLE_PROCESSORS to availableProcessors,
-            OsStatsEnum.UPTIME to upTime,
-            OsStatsEnum.UPTIME_SINCE to upTimeSince,
-            OsStatsEnum.SYSTEM_CPU_AVERAGE_LOAD to systemCpuLoadAverage
+                OsStatsEnum.AVAILABLE_PROCESSORS to availableProcessors,
+                OsStatsEnum.UPTIME to upTime,
+                OsStatsEnum.UPTIME_SINCE to upTimeSince,
+                OsStatsEnum.SYSTEM_CPU_AVERAGE_LOAD to systemCpuLoadAverage
 //            OsStatsEnum.PROCESS_CPU_LOAD to processCpuLoad,
 //            OsStatsEnum.SYSTEM_CPU_LOAD to systemCpuLoad
         )
@@ -178,11 +164,11 @@ class Monitor : JavaPlugin() {
         val peakThreadCount = threadBean.peakThreadCount
 
         return mapOf(
-            ThreadStatsEnum.DAEMON_THREAD_COUNT to daemonThreadCount,
-            ThreadStatsEnum.LIVE_THREAD_COUNT to liveThreadCount,
-            ThreadStatsEnum.REAL_LIVE_THREAD_COUNT to realLiveThreadCount,
-            ThreadStatsEnum.TOTAL_STARTED_THREAD_COUNT to totalStartedThreadCount,
-            ThreadStatsEnum.PEAK_THREAD_COUNT to peakThreadCount
+                ThreadStatsEnum.DAEMON_THREAD_COUNT to daemonThreadCount,
+                ThreadStatsEnum.LIVE_THREAD_COUNT to liveThreadCount,
+                ThreadStatsEnum.REAL_LIVE_THREAD_COUNT to realLiveThreadCount,
+                ThreadStatsEnum.TOTAL_STARTED_THREAD_COUNT to totalStartedThreadCount,
+                ThreadStatsEnum.PEAK_THREAD_COUNT to peakThreadCount
         )
     }
 
@@ -195,46 +181,46 @@ class Monitor : JavaPlugin() {
 
         try {
             return EmbedBuilder().addField(
-                "Server stats",
-                "Server name: ${serverStats[ServerStatsEnum.SERVER_NAME]}\n" +
-                        "Online: ${serverStats[ServerStatsEnum.ONLINE_PLAYERS]}\n" +
-                        "Offline: ${serverStats[ServerStatsEnum.OFFLINE_PLAYERS]}\n" +
-                        "Max: ${serverStats[ServerStatsEnum.MAX_PLAYERS]}\n" +
-                        "Operator count: ${serverStats[ServerStatsEnum.OPERATOR_COUNT]}\n" +
-                        "Operators: ${serverStats[ServerStatsEnum.OPERATORS]}\n" +
-                        "Bans: ${serverStats[ServerStatsEnum.BAN_COUNT]}\n" +
-                        "TPS: ${serverStats[ServerStatsEnum.TPS]}",
-                true
+                    "Server stats",
+                    "Server name: ${serverStats[ServerStatsEnum.SERVER_NAME]}\n" +
+                            "Online: ${serverStats[ServerStatsEnum.ONLINE_PLAYERS]}\n" +
+                            "Offline: ${serverStats[ServerStatsEnum.OFFLINE_PLAYERS]}\n" +
+                            "Max: ${serverStats[ServerStatsEnum.MAX_PLAYERS]}\n" +
+                            "Operator count: ${serverStats[ServerStatsEnum.OPERATOR_COUNT]}\n" +
+                            "Operators: ${serverStats[ServerStatsEnum.OPERATORS]}\n" +
+                            "Bans: ${serverStats[ServerStatsEnum.BAN_COUNT]}\n" +
+                            "TPS: ${serverStats[ServerStatsEnum.TPS]}",
+                    true
             ).addField(
-                "Runtime stats",
-                "Max memory: ${runtimeStats[RuntimeStatsEnum.MAX_MEMORY]} MB\n" +
-                        "Free memory: ${runtimeStats[RuntimeStatsEnum.FREE_MEMORY]} MB\n" +
-                        "Total memory: ${runtimeStats[RuntimeStatsEnum.TOTAL_MEMORY]} MB\n" +
-                        "Used memory: ${runtimeStats[RuntimeStatsEnum.USED_MEMORY]} MB",
-                true
+                    "Runtime stats",
+                    "Max memory: ${runtimeStats[RuntimeStatsEnum.MAX_MEMORY]} MB\n" +
+                            "Free memory: ${runtimeStats[RuntimeStatsEnum.FREE_MEMORY]} MB\n" +
+                            "Total memory: ${runtimeStats[RuntimeStatsEnum.TOTAL_MEMORY]} MB\n" +
+                            "Used memory: ${runtimeStats[RuntimeStatsEnum.USED_MEMORY]} MB",
+                    true
             ).addField(
-                "Os stats",
-                "Uptime since: ${osStats[OsStatsEnum.UPTIME_SINCE]}\n" +
-                        "Available logical cores: ${osStats[OsStatsEnum.AVAILABLE_PROCESSORS]}\n" +
-                        "Average system CPU load ${osStats[OsStatsEnum.SYSTEM_CPU_AVERAGE_LOAD]}",
+                    "Os stats",
+                    "Uptime since: ${osStats[OsStatsEnum.UPTIME_SINCE]}\n" +
+                            "Available logical cores: ${osStats[OsStatsEnum.AVAILABLE_PROCESSORS]}\n" +
+                            "Average system CPU load ${osStats[OsStatsEnum.SYSTEM_CPU_AVERAGE_LOAD]}",
 //                        "Process CPU load: ${osStats[OsStatsEnum.PROCESS_CPU_LOAD]}\n" +
 //                        "System CPU load: ${osStats[OsStatsEnum.SYSTEM_CPU_LOAD]}",
-                true
+                    true
             ).addField(
-                "Thread stats",
-                "Live threads: ${threadStats[ThreadStatsEnum.LIVE_THREAD_COUNT]}\n" +
-                        "Daemon threads: ${threadStats[ThreadStatsEnum.DAEMON_THREAD_COUNT]}\n" +
-                        "Real threads: ${threadStats[ThreadStatsEnum.REAL_LIVE_THREAD_COUNT]}\n" +
-                        "Peak threads: ${threadStats[ThreadStatsEnum.PEAK_THREAD_COUNT]}\n" +
-                        "Lifetime threads: ${threadStats[ThreadStatsEnum.TOTAL_STARTED_THREAD_COUNT]}",
-                true
+                    "Thread stats",
+                    "Live threads: ${threadStats[ThreadStatsEnum.LIVE_THREAD_COUNT]}\n" +
+                            "Daemon threads: ${threadStats[ThreadStatsEnum.DAEMON_THREAD_COUNT]}\n" +
+                            "Real threads: ${threadStats[ThreadStatsEnum.REAL_LIVE_THREAD_COUNT]}\n" +
+                            "Peak threads: ${threadStats[ThreadStatsEnum.PEAK_THREAD_COUNT]}\n" +
+                            "Lifetime threads: ${threadStats[ThreadStatsEnum.TOTAL_STARTED_THREAD_COUNT]}",
+                    true
             ).addField(
-                "Player stats",
-                "Online players: " +
-                        (playerStats[PlayerStatsEnum.ALL_ONLINE_USERS_BY_NAME]?.joinToString(", ") ?: "None"),
-                true
+                    "Player stats",
+                    "Online players: " +
+                            (playerStats[PlayerStatsEnum.ALL_ONLINE_USERS_BY_NAME]?.joinToString(", ") ?: "None"),
+                    true
             ).setColor(0x00AFDF).setTimestamp(
-                Instant.now().atZone(ZoneOffset.UTC)
+                    Instant.now().atZone(ZoneOffset.UTC)
             ).setAuthor("Brought to you by Rezruel#4080").build()
         } catch (exc: IllegalStateException) {
             throw exc
@@ -256,14 +242,10 @@ class Monitor : JavaPlugin() {
         for ((key, _) in allCommands) {
             this.getCommand(key).executor = MonitorCommandExecutor(this)
         }
-//        val scheduler = this.server.scheduler
-//        scheduler.scheduleSyncRepeatingTask(this, {
-//            this.webhook.send(listOf(this.statsToEmbed()))
-//        }, Tick.MINUTE.value, Tick.MINUTE.value * this.config.getString("log_interval").toLong())
-
-//        this.worldCoroutine.start()
         this.statsCoroutine.start()
         this.webhook.send("${this.name} enabled.")
+
+        this.loadCommands()
     }
 
     private fun loadCommands() {
@@ -275,17 +257,16 @@ class Monitor : JavaPlugin() {
             val subcommands = commandManager.getRootCommand("monitor").subCommands
             for (kvp in subcommands.entries()) {
                 if (!kvp.value.isPrivate() && (lower.isEmpty() || kvp.key.toLowerCase().startsWith(lower)) && kvp.value.getCommand().indexOf(
-                        ' '
-                    ) == -1
+                                ' '
+                        ) == -1
                 ) {
                     commands.add(kvp.value.getCommand())
                 }
             }
             commands.toMutableList()
-//            ImmutableList.copyOf<E>(commands)
         }
 
-        commandManager.registerCommand(MonitorCommand(this))
+        commandManager.registerCommand(MonitorCommand(this, "monitor"))
     }
 
 
@@ -293,7 +274,6 @@ class Monitor : JavaPlugin() {
         this.reloadConfig()
         this.saveConfig()
         this.webhook.send("${this.name} disabled.")
-//        this.worldCoroutine.cancel()
         this.statsCoroutine.interrupt()
         this.server.scheduler.cancelTasks(this)
     }

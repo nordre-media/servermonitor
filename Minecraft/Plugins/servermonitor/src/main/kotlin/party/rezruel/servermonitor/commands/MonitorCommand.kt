@@ -1,6 +1,7 @@
 package party.rezruel.servermonitor.commands
 
 import co.aikar.commands.BaseCommand
+import co.aikar.commands.CommandHelp
 import co.aikar.commands.annotation.*
 import org.bukkit.command.CommandSender
 import org.jetbrains.annotations.Nullable
@@ -13,9 +14,13 @@ class MonitorCommand(private val monitor: Monitor, cmd: @Nullable String?) : Bas
     @Subcommand("config")
     @CommandPermission("monitor.config")
     @Description("Gets or sets a config key to a value")
-    @Syntax("[get] <key> [value]")
-    fun onConfig(sender: CommandSender, args: Array<out String>) {
-        ConfigCommand.execute(sender, args, monitor)
+    @Syntax("<key> [get:set] [value]")
+    fun onConfig(
+            sender: CommandSender,
+            key: String,
+            @Default("get") setOrGet: String,
+            @Optional value: String) {
+        ConfigCommand.execute(sender, setOrGet, key, value, monitor)
     }
 
     @Subcommand("log")
@@ -30,8 +35,21 @@ class MonitorCommand(private val monitor: Monitor, cmd: @Nullable String?) : Bas
     @Description("Schedules a reload")
     @CommandAlias("restart")
     @Syntax("<timeformat>")
-    fun onSchedulerestart(sender: CommandSender, args: Array<out String>) {
-        ScheduleRestartCommand.execute(sender, args, monitor)
+    fun onSchedulerestart(sender: CommandSender, @Default("1h") timeformat: String) {
+        ScheduleRestartCommand.execute(sender, timeformat, monitor)
+    }
+
+    @CatchUnknown
+    @Default
+    @CommandCompletion("@subcommand")
+    fun onDefault(sender: CommandSender, args: Array<out String>) {
+        monitor.server.dispatchCommand(sender, "monitor help")
+    }
+
+    @HelpCommand
+    @Syntax("[command]")
+    fun onHelp(sender: CommandSender, help: CommandHelp) {
+        help.showHelp()
     }
 
 }

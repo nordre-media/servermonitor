@@ -1,6 +1,5 @@
 package party.rezruel.servermonitor.commands
 
-import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import party.rezruel.servermonitor.Monitor
 import party.rezruel.servermonitor.commands.interfaces.ICommand
@@ -15,15 +14,15 @@ object ScheduleRestartCommand : ICommand {
 
     @JvmStatic
     private fun makeThread(
-        sender: CommandSender,
-        args: Array<out String>,
-        plugin: Monitor
+            sender: CommandSender,
+            timeformat: String,
+            plugin: Monitor
     ): Thread {
         return thread(true, true) {
             this@ScheduleRestartCommand.done = false
-            val duration = parseDuration(args[0])
+            val duration = parseDuration(timeformat)
             val atTime = Instant.ofEpochMilli(
-                Instant.now().toEpochMilli() + duration
+                    Instant.now().toEpochMilli() + duration
             ).atZone(ZoneId.of("CET")).toLocalDateTime()
 
             val shutdownString = "Server has been scheduled to restart at: " +
@@ -41,15 +40,15 @@ object ScheduleRestartCommand : ICommand {
         }
     }
 
-    override fun execute(
-        sender: CommandSender,
-        args: Array<out String>,
-        plugin: Monitor
+    fun execute(
+            sender: CommandSender,
+            timeformat: String,
+            plugin: Monitor
     ): Boolean {
-        if (args[0].isBlank()) return false
+        if (timeformat.isBlank()) return false
 
         return if (currentlyRunningThread.isInterrupted) {
-            makeThread(sender, args, plugin)
+            makeThread(sender, timeformat, plugin)
             true
         } else if (!done) {
             try {
@@ -57,7 +56,7 @@ object ScheduleRestartCommand : ICommand {
             } catch (exc: InterruptedException) {
                 sender.sendMessage("Cancelled previously scheduled shutdown.")
             }
-            currentlyRunningThread = makeThread(sender, args, plugin)
+            currentlyRunningThread = makeThread(sender, timeformat, plugin)
             true
         } else {
             false
