@@ -1,7 +1,6 @@
 package party.rezruel.servermonitor.listeners
 
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.bukkit.event.EventHandler
@@ -11,6 +10,7 @@ import org.bukkit.event.player.PlayerLoginEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.event.server.PluginDisableEvent
 import party.rezruel.servermonitor.Monitor
+import party.rezruel.servermonitor.enums.TimeUnit
 import java.time.Instant
 
 
@@ -27,6 +27,8 @@ class MinecraftToDiscordEventHandler(private val plugin: Monitor) : Listener {
     private fun chatCacheLimit(): Int {
         return this.plugin.config["chat_cache"].toString().toInt()
     }
+
+    private fun chatCacheTimeUnit() = this.plugin.config["time_unit_cache"].toString().toUpperCase()
 
     private val coroutine = GlobalScope.launch {
         while (this@MinecraftToDiscordEventHandler.plugin.isEnabled) {
@@ -50,7 +52,9 @@ class MinecraftToDiscordEventHandler(private val plugin: Monitor) : Listener {
 
     @EventHandler
     fun onAsyncPlayerChat(event: AsyncPlayerChatEvent) {
-        if (event.player.isOnline) { chatList.add("${event.player.name}: ${event.message}") }
+        if (event.player.isOnline) {
+            chatList.add("${event.player.name}: ${event.message}")
+        }
         this.sendToDiscord()
     }
 
@@ -73,10 +77,11 @@ class MinecraftToDiscordEventHandler(private val plugin: Monitor) : Listener {
 
     private fun sendToDiscord() {
         if (this.chatList.size == this.chatCacheLimit()
-            ||
-            ((Instant.now().toEpochMilli() >= this.lastSent.plusSeconds(60 * this.cacheDelay()).toEpochMilli())
-                    &&
-                    (this.chatList.isNotEmpty()))
+                ||
+                ((Instant.now().toEpochMilli() >= this.lastSent.plusMillis(
+                        1000 * (this.cacheDelay() * TimeUnit.valueOf(chatCacheTimeUnit()).value)).toEpochMilli())
+                        &&
+                        (this.chatList.isNotEmpty()))
         ) {
             this.plugin.getDiscordChatWebhook().send(this.chatList.joinToString(separator = "\n"))
             this.lastSent = Instant.now()

@@ -1,11 +1,13 @@
 package party.rezruel.servermonitor.helpers
 
+import party.rezruel.servermonitor.enums.TimeUnit
+
 val UNITS = mapOf(
-    's' to fun(v: String): Long = v.toLong() * 1000,
-    'm' to fun(v: String): Long = v.toLong() * 1000 * 60,
-    'h' to fun(v: String): Long = v.toLong() * 1000 * 60 * 60,
-    'd' to fun(v: String): Long = v.toLong() * 1000 * 60 * 60 * 24,
-    'w' to fun(v: String): Long = v.toLong() * 1000 * 60 * 60 * 24 * 7
+        's' to fun(v: String): Long = v.toLong() * TimeUnit.SECONDS.value,
+        'm' to fun(v: String): Long = v.toLong() * TimeUnit.MINUTES.value,
+        'h' to fun(v: String): Long = v.toLong() * TimeUnit.HOURS.value,
+        'd' to fun(v: String): Long = v.toLong() * TimeUnit.DAYS.value,
+        'w' to fun(v: String): Long = v.toLong() * TimeUnit.WEEKS.value
 )
 
 fun parseDuration(raw: String): Long {

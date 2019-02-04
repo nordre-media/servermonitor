@@ -36,7 +36,11 @@ class Monitor : JavaPlugin() {
                 this@Monitor.server.consoleSender.sendMessage("Logging to Discord...")
                 this@Monitor.webhook.send(listOf(statsToEmbed()))
                 this@Monitor.server.consoleSender.sendMessage("Logged to Discord.")
-                Thread.sleep(this@Monitor.config.getString("log_interval").toLong() * 1000 * 60)
+                Thread.sleep(
+                        this@Monitor.config.getString("log_interval").toLong() * TimeUnit.valueOf(
+                                this@Monitor.config.getString("time_unit_log").toUpperCase()
+                        ).value
+                )
             }
         }
     }
