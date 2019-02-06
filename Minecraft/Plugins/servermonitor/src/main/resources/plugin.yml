@@ -1,4 +1,4 @@
-name: "monitor"
+name: "Monitor"
 main: "party.rezruel.servermonitor.Monitor"
 version: "1.0.5"
 
@@ -16,7 +16,7 @@ permissions:
   monitor.config:
     default: false
   monitor.schedulerestart:
-    default: false
+    default: op
   monitor.*:
     children:
       monitor.log: true

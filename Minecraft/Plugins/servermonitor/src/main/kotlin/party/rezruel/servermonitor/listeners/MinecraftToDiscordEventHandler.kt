@@ -78,8 +78,7 @@ class MinecraftToDiscordEventHandler(private val plugin: Monitor) : Listener {
     private fun sendToDiscord() {
         if (this.chatList.size == this.chatCacheLimit()
                 ||
-                ((Instant.now().toEpochMilli() >= this.lastSent.plusMillis(
-                        1000 * (this.cacheDelay() * TimeUnit.valueOf(chatCacheTimeUnit()).value)).toEpochMilli())
+                ((Instant.now().toEpochMilli() >= this.lastSent.plusMillis((this.cacheDelay() * TimeUnit.valueOf(chatCacheTimeUnit()).value)).toEpochMilli())
                         &&
                         (this.chatList.isNotEmpty()))
         ) {
