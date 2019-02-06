@@ -5,3 +5,9 @@ cache_delay: "30"
 log_interval: "5"
 time_unit_log: "minutes" # seconds, minutes, hours, days, weeks
 time_unit_cache: "seconds" # seconds, minutes
+status_channel: ""
+status_message: ""
+chat_channel: ""
+modlog_channel: ""
+
+has_been_setup: true

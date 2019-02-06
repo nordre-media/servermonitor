@@ -10,12 +10,12 @@ object ConfigCommand : ICommand {
             sender: CommandSender,
             setOrGet: String,
             key: String,
-            value: String,
+            value: String?,
             plugin: Monitor): Boolean {
         return try {
             when {
                 setOrGet.toLowerCase() == "set" -> {
-                    if (key.isBlank() or value.isBlank()) {
+                    if (key.isBlank() or value.isNullOrBlank()) {
                         return false
                     }
                     plugin.config.set(key, value)
@@ -23,9 +23,9 @@ object ConfigCommand : ICommand {
                     plugin.saveConfig()
                     plugin.reloadConfig()
                 }
-                plugin.config.get(setOrGet) != null -> sender.sendMessage(
-                        "$setOrGet is currently set to ${plugin.config.get(
-                                setOrGet
+                plugin.config.getString(key) != null && setOrGet.toLowerCase() == "get" -> sender.sendMessage(
+                        "$key is currently set to ${plugin.config.getString(
+                                key
                         )}"
                 )
                 else -> return false

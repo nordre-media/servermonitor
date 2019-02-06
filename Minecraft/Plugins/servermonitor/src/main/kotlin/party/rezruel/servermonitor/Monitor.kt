@@ -8,8 +8,6 @@ import net.dv8tion.jda.webhook.WebhookClientBuilder
 import net.dv8tion.jda.webhook.WebhookMessageBuilder
 import org.bukkit.plugin.java.JavaPlugin
 import party.rezruel.servermonitor.commands.MonitorCommand
-import party.rezruel.servermonitor.commands.constants.allCommands
-import party.rezruel.servermonitor.commands.executors.MonitorCommandExecutor
 import party.rezruel.servermonitor.constants.initAllListeners
 import party.rezruel.servermonitor.enums.*
 import party.rezruel.servermonitor.helpers.getPlayerStatsMap
@@ -243,9 +241,9 @@ class Monitor : JavaPlugin() {
                     "${this.pluginLoader.disablePlugin(this)}")
         }
 
-        for ((key, _) in allCommands) {
-            this.getCommand(key).executor = MonitorCommandExecutor(this)
-        }
+//        for ((key, _) in allCommands) {
+//            this.getCommand(key).executor = MonitorCommandExecutor(this)
+//        }
         this.statsCoroutine.start()
         this.webhook.send("${this.name} enabled.")
 
@@ -254,6 +252,7 @@ class Monitor : JavaPlugin() {
 
     private fun loadCommands() {
         val commandManager = PaperCommandManager(this)
+        commandManager.enableUnstableAPI("help")
 
         commandManager.commandCompletions.registerCompletion("subcommand") { c ->
             val lower = c.input.toLowerCase()
@@ -276,6 +275,7 @@ class Monitor : JavaPlugin() {
 
     override fun onDisable() {
         this.reloadConfig()
+        if (!config.getBoolean("has_been_setup", false)) this.saveDefaultConfig()
         this.saveConfig()
         this.webhook.send("${this.name} disabled.")
         this.statsCoroutine.interrupt()

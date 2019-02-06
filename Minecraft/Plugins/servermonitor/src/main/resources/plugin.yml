@@ -16,7 +16,7 @@ permissions:
   monitor.config:
     default: false
   monitor.schedulerestart:
-    default: false
+    default: op
   monitor.*:
     children:
       monitor.log: true

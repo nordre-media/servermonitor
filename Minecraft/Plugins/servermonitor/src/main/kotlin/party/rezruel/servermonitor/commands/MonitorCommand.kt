@@ -19,7 +19,9 @@ class MonitorCommand(private val monitor: Monitor, cmd: @Nullable String?) : Bas
             sender: CommandSender,
             key: String,
             @Default("get") setOrGet: String,
-            @Optional value: String) {
+            @Optional
+            @Default("")
+            value: String?) {
         ConfigCommand.execute(sender, setOrGet, key, value, monitor)
     }
 
@@ -33,7 +35,6 @@ class MonitorCommand(private val monitor: Monitor, cmd: @Nullable String?) : Bas
     @Subcommand("schedulerestart")
     @CommandPermission("monitor.schedulerestart")
     @Description("Schedules a reload")
-    @CommandAlias("restart")
     @Syntax("<timeformat>")
     fun onSchedulerestart(sender: CommandSender, @Default("1h") timeformat: String) {
         ScheduleRestartCommand.execute(sender, timeformat, monitor)
