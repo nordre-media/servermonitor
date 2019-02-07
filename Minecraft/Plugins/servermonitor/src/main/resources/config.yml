@@ -9,5 +9,6 @@ status_channel: ""
 status_message: ""
 chat_channel: ""
 modlog_channel: ""
+inline: false
 
 has_been_setup: true

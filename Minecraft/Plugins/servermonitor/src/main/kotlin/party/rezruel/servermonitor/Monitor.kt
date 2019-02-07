@@ -16,6 +16,7 @@ import java.time.Instant
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.util.*
+import java.util.logging.Level
 import kotlin.concurrent.thread
 
 
@@ -29,11 +30,15 @@ class Monitor : JavaPlugin() {
     }
 
     private val statsCoroutine = thread(false, true) {
-        Thread.sleep(1000)
+        this@Monitor.logger.info("Started Discord logging thread.")
+        Thread.sleep(TimeUnit.MINUTES.value / 2)
         while (this@Monitor.isEnabled) {
-            this@Monitor.server.consoleSender.sendMessage("Logging to Discord...")
+//            this@Monitor.server.consoleSender.sendMessage("Logging to Discord...")
+            this@Monitor.logger.info("Logging to Discord...")
+            this@Monitor.logger.log(Level.FINE, statsToEmbed().toString())
             this@Monitor.webhook.send(listOf(statsToEmbed()))
-            this@Monitor.server.consoleSender.sendMessage("Logged to Discord.")
+//            this@Monitor.server.consoleSender.sendMessage("Logged to Discord.")
+            this@Monitor.logger.info("Logged to Discord.")
             Thread.sleep(
                     TimeUnit.valueOf(this@Monitor.config.getString("time_unit_log").toUpperCase()).value
                             * this@Monitor.config.getString("log_interval").toLong()
@@ -192,14 +197,14 @@ class Monitor : JavaPlugin() {
                             "Operators: ${serverStats[ServerStatsEnum.OPERATORS]}\n" +
                             "Bans: ${serverStats[ServerStatsEnum.BAN_COUNT]}\n" +
                             "TPS: ${serverStats[ServerStatsEnum.TPS]}",
-                    true
+                    this.config.getBoolean("inline", false)
             ).addField(
                     "Runtime stats",
                     "Max memory: ${runtimeStats[RuntimeStatsEnum.MAX_MEMORY]} MB\n" +
                             "Free memory: ${runtimeStats[RuntimeStatsEnum.FREE_MEMORY]} MB\n" +
                             "Total memory: ${runtimeStats[RuntimeStatsEnum.TOTAL_MEMORY]} MB\n" +
                             "Used memory: ${runtimeStats[RuntimeStatsEnum.USED_MEMORY]} MB",
-                    true
+                    this.config.getBoolean("inline", false)
             ).addField(
                     "Os stats",
                     "Uptime since: ${osStats[OsStatsEnum.UPTIME_SINCE]}\n" +
@@ -207,7 +212,7 @@ class Monitor : JavaPlugin() {
                             "Average system CPU load ${osStats[OsStatsEnum.SYSTEM_CPU_AVERAGE_LOAD]}",
 //                        "Process CPU load: ${osStats[OsStatsEnum.PROCESS_CPU_LOAD]}\n" +
 //                        "System CPU load: ${osStats[OsStatsEnum.SYSTEM_CPU_LOAD]}",
-                    true
+                    this.config.getBoolean("inline", false)
             ).addField(
                     "Thread stats",
                     "Live threads: ${threadStats[ThreadStatsEnum.LIVE_THREAD_COUNT]}\n" +
@@ -215,12 +220,12 @@ class Monitor : JavaPlugin() {
                             "Real threads: ${threadStats[ThreadStatsEnum.REAL_LIVE_THREAD_COUNT]}\n" +
                             "Peak threads: ${threadStats[ThreadStatsEnum.PEAK_THREAD_COUNT]}\n" +
                             "Lifetime threads: ${threadStats[ThreadStatsEnum.TOTAL_STARTED_THREAD_COUNT]}",
-                    true
+                    this.config.getBoolean("inline", false)
             ).addField(
                     "Player stats",
                     "Online players: " +
                             (playerStats[PlayerStatsEnum.ALL_ONLINE_USERS_BY_NAME]?.joinToString(", ") ?: "None"),
-                    true
+                    this.config.getBoolean("inline", false)
             ).setColor(0x00AFDF).setTimestamp(
                     Instant.now().atZone(ZoneOffset.UTC)
             ).setAuthor("Brought to you by Rezruel#4080").build()
