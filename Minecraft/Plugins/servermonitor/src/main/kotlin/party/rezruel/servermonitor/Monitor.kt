@@ -174,7 +174,7 @@ class Monitor : JavaPlugin() {
         )
     }
 
-    private fun statsToEmbed(): MessageEmbed {
+    fun statsToEmbed(): MessageEmbed {
         val serverStats = this.serverStatsMap()
         val runtimeStats = this.runtimeStatsMap()
         val osStats = this.osStatsMap()
