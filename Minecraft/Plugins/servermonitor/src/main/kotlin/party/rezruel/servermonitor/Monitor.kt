@@ -28,18 +28,16 @@ class Monitor : JavaPlugin() {
         }
     }
 
-    private val statsCoroutine by lazy {
-        thread(false, true) {
-            while (this@Monitor.isEnabled) {
-                this@Monitor.server.consoleSender.sendMessage("Logging to Discord...")
-                this@Monitor.webhook.send(listOf(statsToEmbed()))
-                this@Monitor.server.consoleSender.sendMessage("Logged to Discord.")
-                Thread.sleep(
-                        this@Monitor.config.getString("log_interval").toLong() * TimeUnit.valueOf(
-                                this@Monitor.config.getString("time_unit_log").toUpperCase()
-                        ).value
-                )
-            }
+    private val statsCoroutine = thread(false, true) {
+        Thread.sleep(1000)
+        while (this@Monitor.isEnabled) {
+            this@Monitor.server.consoleSender.sendMessage("Logging to Discord...")
+            this@Monitor.webhook.send(listOf(statsToEmbed()))
+            this@Monitor.server.consoleSender.sendMessage("Logged to Discord.")
+            Thread.sleep(
+                    TimeUnit.valueOf(this@Monitor.config.getString("time_unit_log").toUpperCase()).value
+                            * this@Monitor.config.getString("log_interval").toLong()
+            )
         }
     }
 
@@ -49,6 +47,7 @@ class Monitor : JavaPlugin() {
         } catch (exception: IllegalArgumentException) {
             throw RuntimeException(
                     "No configured webhook url for ${this.name}. " +
+                            "Value is ${config.get("webhook")} " +
                             "Please configure one (Copy and paste webhook url from Discord) " +
                             "into the config.yml like: " +
                             "webhook: \"https://discordapp.com/api/webhooks/000000000000000000" +
@@ -65,6 +64,7 @@ class Monitor : JavaPlugin() {
         } catch (exception: IllegalArgumentException) {
             throw RuntimeException(
                     "No configured chat webhook url for ${this.name}. " +
+                            "Value is ${config.get("discord_chat_webhook")} " +
                             "Please configure one (Copy and paste webhook url from Discord) " +
                             "into the config.yaml like:" +
                             "discord_chat_webhook: \"https://discordapp.com/api/webhooks/000000000000000000" +
