@@ -1,6 +1,6 @@
-name: "Monitor"
+name: "monitor"
 main: "party.rezruel.servermonitor.Monitor"
-version: "1.0.5"
+version: "1.0.8"
 
 prefix: "MONITOR"
 
@@ -17,9 +17,12 @@ permissions:
     default: false
   monitor.schedulerestart:
     default: op
+  monitor.discord.chat:
+    default: true
   monitor.*:
     children:
       monitor.log: true
       monitor.config: true
       monitor.schedulerestart: true
+      monitor.discord.chat: true
     default: false
