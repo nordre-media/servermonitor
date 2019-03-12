@@ -9,6 +9,7 @@ import net.dv8tion.jda.webhook.WebhookMessageBuilder
 import org.bukkit.plugin.java.JavaPlugin
 import party.rezruel.servermonitor.commands.MonitorCommand
 import party.rezruel.servermonitor.constants.initAllListeners
+import party.rezruel.servermonitor.discord.DiscordClient
 import party.rezruel.servermonitor.enums.*
 import party.rezruel.servermonitor.helpers.getPlayerStatsMap
 import java.lang.management.ManagementFactory
@@ -73,6 +74,8 @@ class Monitor : JavaPlugin() {
             )
         }
     }
+
+    private val discordClient = DiscordClient(this)
 
     fun getDiscordWebhook(): WebhookClient = this.webhook
 
@@ -229,27 +232,6 @@ class Monitor : JavaPlugin() {
         }
     }
 
-    override fun onEnable() {
-//        val redisStats = RedisStats
-//        redisStats.setMonitor(this)
-        this.reloadConfig()
-        this.saveConfig()
-
-        // Why are we unloading while also throwing? To be dumb of course.
-        if (!initAllListeners(this)) {
-            throw RuntimeException("Could not initialise all listeners. Disabling..." +
-                    "${this.pluginLoader.disablePlugin(this)}")
-        }
-
-//        for ((key, _) in allCommands) {
-//            this.getCommand(key).executor = MonitorCommandExecutor(this)
-//        }
-        this.statsCoroutine.start()
-        this.webhook.send("${this.name} enabled.")
-
-        this.loadCommands()
-    }
-
     private fun loadCommands() {
         val commandManager = PaperCommandManager(this)
         commandManager.enableUnstableAPI("help")
@@ -272,17 +254,40 @@ class Monitor : JavaPlugin() {
         commandManager.registerCommand(MonitorCommand(this, "monitor"))
     }
 
+    override fun onEnable() {
+//        val redisStats = RedisStats
+//        redisStats.setMonitor(this)
+        this.reloadConfig()
+        this.saveConfig()
+
+        // Why are we unloading while also throwing? To be dumb of course.
+        if (!initAllListeners(this)) {
+            throw RuntimeException("Could not initialise all listeners. Disabling..." +
+                    "${this.pluginLoader.disablePlugin(this)}")
+        }
+
+//        for ((key, _) in allCommands) {
+//            this.getCommand(key).executor = MonitorCommandExecutor(this)
+//        }
+        this.statsCoroutine.start()
+        this.webhook.send("${this.name} enabled.")
+
+        this.loadCommands()
+    }
+
 
     override fun onDisable() {
         this.reloadConfig()
-        if (!config.getBoolean("has_been_setup", false)) this.saveDefaultConfig()
         this.saveConfig()
         this.webhook.send("${this.name} disabled.")
         this.statsCoroutine.interrupt()
         this.server.scheduler.cancelTasks(this)
+
+        this.discordClient.cleanShutdown()
     }
 
     override fun onLoad() {
         this.webhook.send("${this.name} loaded.")
+        this.discordClient.jda.awaitReady()
     }
 }

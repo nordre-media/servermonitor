@@ -1,70 +1,88 @@
 package party.rezruel.servermonitor.discord
 
-import kotlinx.coroutines.*
+import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.JDABuilder
 import net.dv8tion.jda.core.MessageBuilder
 import party.rezruel.servermonitor.Monitor
 import party.rezruel.servermonitor.discord.events.DiscordBridgeListener
 import party.rezruel.servermonitor.enums.TimeUnit
+import java.time.Instant
+import java.time.ZoneOffset
+import kotlin.concurrent.thread
 
-@ExperimentalCoroutinesApi
 class DiscordClient(private val monitor: Monitor) {
 
-    @ExperimentalCoroutinesApi
-    val JDA by lazy {
-        this.asyncJDA.getCompleted()
-    }
+    val jda = this.buildJDA()
 
-    private val asyncCoro by lazy {
-        GlobalScope.async {
-            JDABuilder(monitor.config.getString(token())).addEventListener(DiscordBridgeListener())
-        }
-    }
-
-    private val asyncJDA by lazy {
-        GlobalScope.async {
-            asyncCoro.await().build()
-        }
-    }
-
-    private val discordConfigMap = mutableMapOf<String, String>()
-
-    private fun token() = monitor.config.getString("bot_token")
+    private var statusThread: Thread
 
     init {
-        this.asyncCoro
-        this.asyncJDA
 
-        runBlocking {
-            launch {
-                val conf = this@DiscordClient.monitor.config
-                val map = this@DiscordClient.discordConfigMap
+        DiscordObjectOrientedStateSucks.monitor = monitor
 
-                map["modlog_channel"] = conf.get("modlog_channel").toString()
-                map["status_channel"] = conf.get("status_channel").toString()
-                map["status_message"] = conf.get("status_message").toString()
-                map["chat_channel"] = conf.get("chat_channel").toString()
+        this.jda.addEventListener(DiscordBridgeListener())
 
-                DiscordBridgeObject.configMap = map
-                DiscordBridgeObject.monitor = monitor
+        this.statusThread = this.updateStatusInfoMessage()
+
+    }
+
+    private fun buildJDA(): JDA {
+        monitor.logger.info("Discord token: ${this.token()}")
+        val client = JDABuilder(token()).build()
+        client.awaitReady()
+        return client
+    }
+
+    private fun token() = monitor.config.getString("bot_token")
+    private fun channel() = monitor.config.getString("status_channel")
+    private fun message() = monitor.config.getString("status_message")
+    private fun interval() = monitor.config.getString("status_interval").toLong()
+    private fun timeUnit() = TimeUnit.valueOf(monitor.config.getString("time_unit_status").toUpperCase()).value
+    private fun discordChannel() = jda.getTextChannelById(channel())
+    private fun discordMessage() = discordChannel().getMessageById(message()).complete()
+
+    private fun embedContent() = MessageBuilder().setContent("\u200b").setEmbed(monitor.statsToEmbed()).build()
+
+    private fun updateStatusInfoMessage(): Thread {
+        return thread(start = true, isDaemon = true) {
+            while (true) {
+//                monitor.logger.info("msg id: ${discordMessage().id} chan id: ${discordMessage().channel.id}")
+                try {
+                    discordMessage().editMessage(embedContent()).queue()
+                } catch (exc: Exception) {
+                    monitor.logger.info("$exc\n${exc.stackTrace}\n${exc.cause}")
+                    discordMessage().editMessage("En error occurred while updating the status message." +
+                            "\nEdited: ${Instant.now().atOffset(ZoneOffset.UTC)}").queue()
+                }
+//                monitor.logger.info("Sleeping status message thread")
+                Thread.sleep(timeUnit() * interval())
             }
         }
     }
 
-    private suspend fun updateStatusInfoMessage() {
-        while (monitor.isEnabled) {
-            if (JDA.status != net.dv8tion.jda.core.JDA.Status.CONNECTED) {
-                continue
-            }
-            delay(
-                    TimeUnit.valueOf(monitor.config.get("time_unit_status").toString().toUpperCase()).value
-                            * monitor.config.get("status_interval").toString().toLong()
-            )
-            JDA.getTextChannelById(monitor.config.get("status_message").toString())
-                    .getMessageById(monitor.config.get("status_message").toString())
-                    .complete()
-                    .editMessage(MessageBuilder().setEmbed(monitor.statsToEmbed()).build())
-                    .queue()
+    private fun cancelStatusInfoMessage(): Boolean {
+        return if (this.statusThread.isInterrupted) {
+            false
+        } else {
+            this.statusThread.interrupt()
+            true
+        }
+    }
+
+    fun restartStatusInfoMessage(): Boolean {
+        return if (this.cancelStatusInfoMessage()) {
+            this.updateStatusInfoMessage()
+            true
+        } else false
+    }
+
+    fun cleanShutdown(): Boolean {
+        return try {
+            this.cancelStatusInfoMessage()
+            this.jda.shutdown()
+            true
+        } catch (exc: Exception) {
+            false
         }
     }
 }
