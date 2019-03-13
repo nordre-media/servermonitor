@@ -13,7 +13,7 @@ class DiscordBridgeListener : ListenerAdapter() {
             return
         } else {
             monitor.server.broadcast(
-                    "§9${event.author.name}#${event.author.discriminator}§e:§r ${event.message.contentStripped}",
+                    "§b${event.author.name}§r#§6${event.author.discriminator}:§r ${event.message.contentStripped}",
                     "monitor.discord.chat"
             )
         }
