@@ -33,7 +33,7 @@ class Monitor : JavaPlugin() {
         Thread.sleep(1000)
         while (this@Monitor.isEnabled) {
             this@Monitor.server.consoleSender.sendMessage("Logging to Discord...")
-            this@Monitor.webhook.send(listOf(statsToEmbed()))
+            this@Monitor.webhook.send(listOf(modStatsToEmbed()))
             this@Monitor.server.consoleSender.sendMessage("Logged to Discord.")
             Thread.sleep(
                     TimeUnit.valueOf(this@Monitor.config.getString("time_unit_log").toUpperCase()).value
@@ -85,7 +85,7 @@ class Monitor : JavaPlugin() {
         this.webhook.send(
                 WebhookMessageBuilder()
                         .addEmbeds(
-                                listOf(this.statsToEmbed())
+                                listOf(this.modStatsToEmbed())
                         )
                         .setContent(
                                 if (author != null) "Stats sent early by: $author" else "Stats sent early by an unknown author"
@@ -104,6 +104,8 @@ class Monitor : JavaPlugin() {
         val maxPlayers = server.maxPlayers
         val operators = server.operators.size
         val operatorNameAndIds = mutableListOf<String>()
+        val serverVersion = server.version
+        val bukkitServerVersion = server.bukkitVersion
 
         server.operators.forEach { operatorNameAndIds.add("${it.name}(${it.uniqueId})\n") }
 
@@ -115,7 +117,9 @@ class Monitor : JavaPlugin() {
                 ServerStatsEnum.BAN_COUNT to bannedPlayerCount,
                 ServerStatsEnum.MAX_PLAYERS to maxPlayers,
                 ServerStatsEnum.OPERATOR_COUNT to operators,
-                ServerStatsEnum.OPERATORS to operatorNameAndIds
+                ServerStatsEnum.OPERATORS to operatorNameAndIds,
+                ServerStatsEnum.SERVER_VERSION to serverVersion,
+                ServerStatsEnum.BUKKIT_SERVER_VERSION to bukkitServerVersion
         )
     }
 
@@ -177,7 +181,7 @@ class Monitor : JavaPlugin() {
         )
     }
 
-    fun statsToEmbed(): MessageEmbed {
+    fun modStatsToEmbed(inline: Boolean = true): MessageEmbed {
         val serverStats = this.serverStatsMap()
         val runtimeStats = this.runtimeStatsMap()
         val osStats = this.osStatsMap()
@@ -194,15 +198,17 @@ class Monitor : JavaPlugin() {
                             "Operator count: ${serverStats[ServerStatsEnum.OPERATOR_COUNT]}\n" +
                             "Operators: ${serverStats[ServerStatsEnum.OPERATORS]}\n" +
                             "Bans: ${serverStats[ServerStatsEnum.BAN_COUNT]}\n" +
-                            "TPS: ${serverStats[ServerStatsEnum.TPS]}",
-                    true
+                            "TPS: ${serverStats[ServerStatsEnum.TPS]}\n" +
+                            "VERSION: ${serverStats[ServerStatsEnum.SERVER_VERSION]}\n" +
+                            "BUKKIT_VERSION: ${serverStats[ServerStatsEnum.BUKKIT_SERVER_VERSION]}",
+                    inline
             ).addField(
                     "Runtime stats",
                     "Max memory: ${runtimeStats[RuntimeStatsEnum.MAX_MEMORY]} MB\n" +
                             "Free memory: ${runtimeStats[RuntimeStatsEnum.FREE_MEMORY]} MB\n" +
                             "Total memory: ${runtimeStats[RuntimeStatsEnum.TOTAL_MEMORY]} MB\n" +
                             "Used memory: ${runtimeStats[RuntimeStatsEnum.USED_MEMORY]} MB",
-                    true
+                    inline
             ).addField(
                     "Os stats",
                     "Uptime since: ${osStats[OsStatsEnum.UPTIME_SINCE]}\n" +
@@ -210,7 +216,7 @@ class Monitor : JavaPlugin() {
                             "Average system CPU load ${osStats[OsStatsEnum.SYSTEM_CPU_AVERAGE_LOAD]}",
 //                        "Process CPU load: ${osStats[OsStatsEnum.PROCESS_CPU_LOAD]}\n" +
 //                        "System CPU load: ${osStats[OsStatsEnum.SYSTEM_CPU_LOAD]}",
-                    true
+                    inline
             ).addField(
                     "Thread stats",
                     "Live threads: ${threadStats[ThreadStatsEnum.LIVE_THREAD_COUNT]}\n" +
@@ -218,12 +224,46 @@ class Monitor : JavaPlugin() {
                             "Real threads: ${threadStats[ThreadStatsEnum.REAL_LIVE_THREAD_COUNT]}\n" +
                             "Peak threads: ${threadStats[ThreadStatsEnum.PEAK_THREAD_COUNT]}\n" +
                             "Lifetime threads: ${threadStats[ThreadStatsEnum.TOTAL_STARTED_THREAD_COUNT]}",
-                    true
+                    inline
             ).addField(
                     "Player stats",
                     "Online players: " +
                             (playerStats[PlayerStatsEnum.ALL_ONLINE_USERS_BY_NAME]?.joinToString(", ") ?: "None"),
-                    true
+                    inline
+            ).setColor(0x00AFDF).setTimestamp(
+                    Instant.now().atZone(ZoneOffset.UTC)
+            ).setAuthor("Brought to you by Rezruel#4080").build()
+        } catch (exc: IllegalStateException) {
+            throw exc
+        }
+    }
+
+    fun publicStatsToEmbed(inline: Boolean = false): MessageEmbed {
+        val serverStats = this.serverStatsMap()
+        val osStats = this.osStatsMap()
+        val playerStats = getPlayerStatsMap(this)
+
+        try {
+            return EmbedBuilder().addField(
+                    "Server stats",
+                    "Server name: ${serverStats[ServerStatsEnum.SERVER_NAME]}\n" +
+                            "Online: ${serverStats[ServerStatsEnum.ONLINE_PLAYERS]}\n" +
+                            "Offline: ${serverStats[ServerStatsEnum.OFFLINE_PLAYERS]}\n" +
+                            "Max: ${serverStats[ServerStatsEnum.MAX_PLAYERS]}\n" +
+                            "Operator count: ${serverStats[ServerStatsEnum.OPERATOR_COUNT]}\n" +
+                            "TPS: ${serverStats[ServerStatsEnum.TPS]}\n" +
+                            "VERSION: ${serverStats[ServerStatsEnum.SERVER_VERSION]}\n" +
+                            "BUKKIT_VERSION: ${serverStats[ServerStatsEnum.BUKKIT_SERVER_VERSION]}",
+                    inline
+            ).addField(
+                    "Os stats",
+                    "Uptime since: ${osStats[OsStatsEnum.UPTIME_SINCE]}\n",
+                    inline
+            ).addField(
+                    "Player stats",
+                    "Online players: " +
+                            (playerStats[PlayerStatsEnum.ALL_ONLINE_USERS_BY_NAME]?.joinToString(", ") ?: "None"),
+                    inline
             ).setColor(0x00AFDF).setTimestamp(
                     Instant.now().atZone(ZoneOffset.UTC)
             ).setAuthor("Brought to you by Rezruel#4080").build()

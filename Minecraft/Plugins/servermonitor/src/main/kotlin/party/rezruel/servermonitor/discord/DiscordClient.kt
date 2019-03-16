@@ -41,7 +41,7 @@ class DiscordClient(private val monitor: Monitor) {
     private fun discordChannel() = jda.getTextChannelById(channel())
     private fun discordMessage() = discordChannel().getMessageById(message()).complete()
 
-    private fun embedContent() = MessageBuilder().setContent("\u200b").setEmbed(monitor.statsToEmbed()).build()
+    private fun embedContent() = MessageBuilder().setContent("\u200b").setEmbed(monitor.publicStatsToEmbed()).build()
 
     private fun updateStatusInfoMessage(): Thread {
         return thread(start = true, isDaemon = true) {

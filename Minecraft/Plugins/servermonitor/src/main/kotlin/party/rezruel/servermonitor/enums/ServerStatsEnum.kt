@@ -8,5 +8,7 @@ enum class ServerStatsEnum {
     BAN_COUNT,
     MAX_PLAYERS,
     OPERATOR_COUNT,
-    OPERATORS
+    OPERATORS,
+    SERVER_VERSION,
+    BUKKIT_SERVER_VERSION
 }
