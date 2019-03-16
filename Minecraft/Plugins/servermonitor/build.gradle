@@ -8,7 +8,7 @@ plugins {
 mainClassName = 'party.rezruel.servermonitor.Monitor'
 
 group 'party.rezruel'
-version '1.0.8'
+version '1.0.9'
 
 def jdaVersion = '3.8.1_448'
 def paperVersion = '1.12.2-R0.1-SNAPSHOT'
