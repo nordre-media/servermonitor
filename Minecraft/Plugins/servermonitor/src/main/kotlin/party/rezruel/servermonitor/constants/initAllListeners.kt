@@ -1,7 +1,6 @@
 package party.rezruel.servermonitor.constants
 
 import party.rezruel.servermonitor.Monitor
-import party.rezruel.servermonitor.listeners.BedListener
 import party.rezruel.servermonitor.listeners.LoginListener
 import party.rezruel.servermonitor.listeners.MinecraftToDiscordEventHandler
 
@@ -15,7 +14,7 @@ fun initAllListeners(plugin: Monitor): Boolean {
         manager.registerEvents(MinecraftToDiscordEventHandler(plugin), plugin)
 
         true
-    } catch(exc: Exception) {
+    } catch (exc: Exception) {
         false
     }
 }

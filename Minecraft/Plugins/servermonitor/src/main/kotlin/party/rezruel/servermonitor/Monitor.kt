@@ -24,7 +24,7 @@ class Monitor : JavaPlugin() {
 
     companion object {
         @JvmStatic
-        fun main(args: Array<String>) {
+        fun main() {
             println("This is not a standalone jar")
         }
     }

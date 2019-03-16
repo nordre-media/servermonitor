@@ -1,6 +1,5 @@
 package party.rezruel.servermonitor.commands
 
-import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import party.rezruel.servermonitor.Monitor
@@ -9,8 +8,8 @@ import java.util.logging.Level
 
 object LogCommand : ICommand {
     override fun execute(
-        sender: CommandSender,
-        plugin: Monitor
+            sender: CommandSender,
+            plugin: Monitor
     ): Boolean {
         return try {
             plugin.sendStatsToDiscord(if (sender is Player) sender.name else null)
