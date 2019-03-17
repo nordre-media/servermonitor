@@ -199,8 +199,8 @@ class Monitor : JavaPlugin() {
                             "Operators: ${serverStats[ServerStatsEnum.OPERATORS]}\n" +
                             "Bans: ${serverStats[ServerStatsEnum.BAN_COUNT]}\n" +
                             "TPS: ${serverStats[ServerStatsEnum.TPS]}\n" +
-                            "VERSION: ${serverStats[ServerStatsEnum.SERVER_VERSION]}\n" +
-                            "BUKKIT_VERSION: ${serverStats[ServerStatsEnum.BUKKIT_SERVER_VERSION]}",
+                            "Version: ${serverStats[ServerStatsEnum.SERVER_VERSION]}\n" +
+                            "Bukkit version: ${serverStats[ServerStatsEnum.BUKKIT_SERVER_VERSION]}",
                     inline
             ).addField(
                     "Runtime stats",
@@ -232,7 +232,9 @@ class Monitor : JavaPlugin() {
                     inline
             ).setColor(0x00AFDF).setTimestamp(
                     Instant.now().atZone(ZoneOffset.UTC)
-            ).setAuthor("Brought to you by Rezruel#4080").build()
+            ).setAuthor("Brought to you by Rezruel#4080").setFooter(
+                    Instant.now().atOffset(ZoneOffset.UTC).toString(), null
+            ).build()
         } catch (exc: IllegalStateException) {
             throw exc
         }
@@ -252,8 +254,8 @@ class Monitor : JavaPlugin() {
                             "Max: ${serverStats[ServerStatsEnum.MAX_PLAYERS]}\n" +
                             "Operator count: ${serverStats[ServerStatsEnum.OPERATOR_COUNT]}\n" +
                             "TPS: ${serverStats[ServerStatsEnum.TPS]}\n" +
-                            "VERSION: ${serverStats[ServerStatsEnum.SERVER_VERSION]}\n" +
-                            "BUKKIT_VERSION: ${serverStats[ServerStatsEnum.BUKKIT_SERVER_VERSION]}",
+                            "Version: ${serverStats[ServerStatsEnum.SERVER_VERSION]}\n" +
+                            "Bukkit version: ${serverStats[ServerStatsEnum.BUKKIT_SERVER_VERSION]}",
                     inline
             ).addField(
                     "Os stats",
@@ -266,7 +268,11 @@ class Monitor : JavaPlugin() {
                     inline
             ).setColor(0x00AFDF).setTimestamp(
                     Instant.now().atZone(ZoneOffset.UTC)
-            ).setAuthor("Brought to you by Rezruel#4080").build()
+            ).setAuthor(
+                    "Brought to you by Rezruel#4080"
+            ).setFooter(
+                    Instant.now().atOffset(ZoneOffset.UTC).toString(), null
+            ).build()
         } catch (exc: IllegalStateException) {
             throw exc
         }
