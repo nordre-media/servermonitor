@@ -27,7 +27,7 @@ class DiscordClient(private val monitor: Monitor) {
     }
 
     private fun buildJDA(): JDA {
-        monitor.logger.info("Discord token: ${this.token()}")
+//        monitor.logger.info("Discord token: ${this.token()}")
         val client = JDABuilder(token()).build()
         client.awaitReady()
         return client
@@ -50,7 +50,8 @@ class DiscordClient(private val monitor: Monitor) {
                 try {
                     discordMessage().editMessage(embedContent()).queue()
                 } catch (exc: Exception) {
-                    monitor.logger.info("$exc\n${exc.stackTrace}\n${exc.cause}")
+                    monitor.logger.info("$exc\n${exc.cause}")
+                    exc.printStackTrace()
                     discordMessage().editMessage("En error occurred while updating the status message." +
                             "\nEdited: ${Instant.now().atOffset(ZoneOffset.UTC)}").queue()
                 }
