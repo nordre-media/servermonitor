@@ -1,6 +1,6 @@
 name: "monitor"
 main: "party.rezruel.servermonitor.Monitor"
-version: "1.1.1"
+version: "1.1.2"
 
 prefix: "MONITOR"
 

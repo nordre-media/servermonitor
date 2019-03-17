@@ -192,6 +192,8 @@ class Monitor : JavaPlugin() {
             return EmbedBuilder().addField(
                     "Server stats",
                     "Server name: ${serverStats[ServerStatsEnum.SERVER_NAME]}\n" +
+                            "Server address: ${this.config.getString("server_address")
+                                    ?: "minecraft.rezruel.party"}\n" +
                             "Online: ${serverStats[ServerStatsEnum.ONLINE_PLAYERS]}\n" +
                             "Offline: ${serverStats[ServerStatsEnum.OFFLINE_PLAYERS]}\n" +
                             "Max: ${serverStats[ServerStatsEnum.MAX_PLAYERS]}\n" +
@@ -249,6 +251,8 @@ class Monitor : JavaPlugin() {
             return EmbedBuilder().addField(
                     "Server stats",
                     "Server name: ${serverStats[ServerStatsEnum.SERVER_NAME]}\n" +
+                            "Server address: ${this.config.getString("server_address")
+                                    ?: "minecraft.rezruel.party"}\n" +
                             "Online: ${serverStats[ServerStatsEnum.ONLINE_PLAYERS]}\n" +
                             "Offline: ${serverStats[ServerStatsEnum.OFFLINE_PLAYERS]}\n" +
                             "Max: ${serverStats[ServerStatsEnum.MAX_PLAYERS]}\n" +
