@@ -1,14 +1,6 @@
 package party.rezruel.servermonitor.external
 
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import io.github.rybalkinsd.kohttp.dsl.httpPost
-import io.github.rybalkinsd.kohttp.ext.httpGet
 import party.rezruel.servermonitor.Monitor
-import party.rezruel.servermonitor.enums.HttpMethod
-import java.util.concurrent.LinkedBlockingDeque
-import java.util.concurrent.ThreadPoolExecutor
-import java.util.concurrent.TimeUnit
 
 class RedisStats(private val monitor: Monitor) {
 

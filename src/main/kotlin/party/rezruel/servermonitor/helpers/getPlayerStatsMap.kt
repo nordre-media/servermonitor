@@ -17,7 +17,7 @@ fun getPlayerStatsMap(plugin: Monitor): Map<PlayerStatsEnum, MutableList<String>
 
     plugin.server.offlinePlayers.forEach {
         if (!it.isOnline) {
-            offlinePlayersByName.add(it.name)
+            it.name?.let { it1 -> offlinePlayersByName.add(it1) }
             offlinePlayersByUUID.add(it.uniqueId.toString())
         }
     }

@@ -31,8 +31,8 @@ object ScheduleRestartCommand : ICommand {
                     "\nby ${sender.name}"
 
             plugin.server.broadcastMessage(shutdownString)
-            plugin.getDiscordWebhook().send(shutdownString)
-            plugin.getDiscordChatWebhook().send(shutdownString)
+            plugin.getDiscordWebhook()?.send(shutdownString)
+            plugin.getDiscordChatWebhook()?.send(shutdownString)
 
             Thread.sleep(duration)
             this@ScheduleRestartCommand.done = true

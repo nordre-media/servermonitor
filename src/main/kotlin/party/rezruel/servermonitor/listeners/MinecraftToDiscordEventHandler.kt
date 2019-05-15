@@ -82,7 +82,7 @@ class MinecraftToDiscordEventHandler(private val plugin: Monitor) : Listener {
                         &&
                         (this.chatList.isNotEmpty()))
         ) {
-            this.plugin.getDiscordChatWebhook().send(this.chatList.joinToString(separator = "\n"))
+            this.plugin.getDiscordChatWebhook()?.send(this.chatList.joinToString(separator = "\n"))
             this.lastSent = Instant.now()
             this.chatList = mutableListOf()
         }

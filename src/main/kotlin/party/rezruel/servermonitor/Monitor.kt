@@ -33,18 +33,18 @@ class Monitor : JavaPlugin() {
         Thread.sleep(1000)
         while (this@Monitor.isEnabled) {
             this@Monitor.server.consoleSender.sendMessage("Logging to Discord...")
-            this@Monitor.webhook.send(listOf(modStatsToEmbed()))
+            this@Monitor.webhook?.send(listOf(modStatsToEmbed()))
             this@Monitor.server.consoleSender.sendMessage("Logged to Discord.")
             Thread.sleep(
-                    TimeUnit.valueOf(this@Monitor.config.getString("time_unit_log").toUpperCase()).value
-                            * this@Monitor.config.getString("log_interval").toLong()
+                    TimeUnit.valueOf(this@Monitor.config.getString("time_unit_log")!!.toUpperCase()).value
+                            * this@Monitor.config.getString("log_interval")!!.toLong()
             )
         }
     }
 
     private val webhook by lazy {
         try {
-            WebhookClientBuilder(this.config.getString("webhook")).build()
+            this.config.getString("webhook")?.let { WebhookClientBuilder(it).build() }
         } catch (exception: IllegalArgumentException) {
             throw RuntimeException(
                     "No configured webhook url for ${this.name}. " +
@@ -61,7 +61,7 @@ class Monitor : JavaPlugin() {
 
     private val chatWebhook by lazy {
         try {
-            WebhookClientBuilder(this.config.getString("discord_chat_webhook")).build()
+            this.config.getString("discord_chat_webhook")?.let { WebhookClientBuilder(it).build() }
         } catch (exception: IllegalArgumentException) {
             throw RuntimeException(
                     "No configured chat webhook url for ${this.name}. " +
@@ -77,12 +77,12 @@ class Monitor : JavaPlugin() {
 
     private val discordClient = DiscordClient(this)
 
-    fun getDiscordWebhook(): WebhookClient = this.webhook
+    fun getDiscordWebhook(): WebhookClient? = this.webhook
 
-    fun getDiscordChatWebhook(): WebhookClient = this.chatWebhook
+    fun getDiscordChatWebhook(): WebhookClient? = this.chatWebhook
 
     fun sendStatsToDiscord(author: String? = null) {
-        this.webhook.send(
+        this.webhook?.send(
                 WebhookMessageBuilder()
                         .addEmbeds(
                                 listOf(this.modStatsToEmbed())
@@ -320,7 +320,7 @@ class Monitor : JavaPlugin() {
 //            this.getCommand(key).executor = MonitorCommandExecutor(this)
 //        }
         this.statsCoroutine.start()
-        this.webhook.send("${this.name} enabled.")
+        this.webhook?.send("${this.name} enabled.")
 
         this.loadCommands()
     }
@@ -329,7 +329,7 @@ class Monitor : JavaPlugin() {
     override fun onDisable() {
         this.reloadConfig()
         this.saveConfig()
-        this.webhook.send("${this.name} disabled.")
+        this.webhook?.send("${this.name} disabled.")
         this.statsCoroutine.interrupt()
         this.server.scheduler.cancelTasks(this)
 
@@ -337,7 +337,7 @@ class Monitor : JavaPlugin() {
     }
 
     override fun onLoad() {
-        this.webhook.send("${this.name} loaded.")
+        this.webhook?.send("${this.name} loaded.")
         this.discordClient.jda.awaitReady()
     }
 }

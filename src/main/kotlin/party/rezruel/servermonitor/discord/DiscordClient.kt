@@ -36,8 +36,8 @@ class DiscordClient(private val monitor: Monitor) {
     private fun token() = monitor.config.getString("bot_token")
     private fun channel() = monitor.config.getString("status_channel")
     private fun message() = monitor.config.getString("status_message")
-    private fun interval() = monitor.config.getString("status_interval").toLong()
-    private fun timeUnit() = TimeUnit.valueOf(monitor.config.getString("time_unit_status").toUpperCase()).value
+    private fun interval() = monitor.config.getString("status_interval")?.toLong()
+    private fun timeUnit() = TimeUnit.valueOf(monitor.config.getString("time_unit_status")!!.toUpperCase()).value
     private fun discordChannel() = jda.getTextChannelById(channel())
     private fun discordMessage() = discordChannel().getMessageById(message()).complete()
 
@@ -56,7 +56,7 @@ class DiscordClient(private val monitor: Monitor) {
                             "\nEdited: ${Instant.now().atOffset(ZoneOffset.UTC)}").queue()
                 }
 //                monitor.logger.info("Sleeping status message thread")
-                Thread.sleep(timeUnit() * interval())
+                Thread.sleep(timeUnit() * this.interval()!!)
             }
         }
     }

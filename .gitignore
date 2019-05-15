@@ -5,3 +5,6 @@ Minecraft/Plugins/servermonitor/.gradle
 Minecraft/Plugins/servermonitor/gradle
 /.idea
 /Spillkveld.iml
+/gradle/
+/.gradle/
+/build/
