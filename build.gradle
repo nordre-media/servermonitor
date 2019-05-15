@@ -56,4 +56,8 @@ shadowJar {
     relocate 'co.aikar.commands', 'party.rezruel.servermonitor.acf'
 }
 
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.10'
+}
+
 build.dependsOn shadowJar
