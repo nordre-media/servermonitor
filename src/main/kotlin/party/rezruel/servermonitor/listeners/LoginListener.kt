@@ -14,7 +14,8 @@ class LoginListener(private val plugin: Monitor) : Listener {
     fun onPlayerJoin(event: PlayerJoinEvent) {
         if (event.player.isOnline and (event.player is Player)) {
             event.player.sendMessage("Hjertelig...Velkommen...Til...Radio...Nordre...MEDIA!!!\n" +
-                    "Husk å bli medlem i vår Discord: https://discord.gg/R8XXyMB")
+                    "Husk å bli medlem i vår Discord: ${plugin.getLiveDiscordInvite()?.url}"
+            )
         }
 
 //        this.plugin.getDiscordChatWebhook().send("**${event.player.name}**: joined the server.")

@@ -2,6 +2,7 @@ package party.rezruel.servermonitor
 
 import co.aikar.commands.PaperCommandManager
 import net.dv8tion.jda.core.EmbedBuilder
+import net.dv8tion.jda.core.entities.Invite
 import net.dv8tion.jda.core.entities.MessageEmbed
 import net.dv8tion.jda.webhook.WebhookClient
 import net.dv8tion.jda.webhook.WebhookClientBuilder
@@ -91,6 +92,10 @@ class Monitor : JavaPlugin() {
                                 if (author != null) "Stats sent early by: $author" else "Stats sent early by an unknown author"
                         ).build()
         )
+    }
+
+    fun getLiveDiscordInvite(): Invite? {
+        return this.discordClient.jda.getGuildById(220565164775309312).invites.complete()[0]
     }
 
     private fun serverStatsMap(): Map<ServerStatsEnum, Any> {
