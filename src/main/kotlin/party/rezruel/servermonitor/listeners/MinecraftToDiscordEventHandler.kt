@@ -53,19 +53,19 @@ class MinecraftToDiscordEventHandler(private val plugin: Monitor) : Listener {
     @EventHandler
     fun onAsyncPlayerChat(event: AsyncPlayerChatEvent) {
         if (event.player.isOnline) {
-            chatList.add("${event.player.name}: ${event.message}")
+            chatList.add("> **${event.player.name}**\n> ${event.message}")
         }
         this.sendToDiscord()
     }
 
     @EventHandler
     fun onPlayerLogin(event: PlayerLoginEvent) {
-        chatList.add("${event.player.name}: Joined the server.")
+        chatList.add("> **${event.player.name}**\n > Joined the server.")
     }
 
     @EventHandler
     fun onPlayerQuit(event: PlayerQuitEvent) {
-        chatList.add("${event.player.name}: Left the server.")
+        chatList.add("> **${event.player.name}**\n> Left the server.")
     }
 
     @EventHandler
@@ -78,7 +78,9 @@ class MinecraftToDiscordEventHandler(private val plugin: Monitor) : Listener {
     private fun sendToDiscord() {
         if (this.chatList.size == this.chatCacheLimit()
                 ||
-                ((Instant.now().toEpochMilli() >= this.lastSent.plusMillis((this.cacheDelay() * TimeUnit.valueOf(chatCacheTimeUnit()).value)).toEpochMilli())
+            ((Instant.now().toEpochMilli() >= this.lastSent.plusMillis(
+                (this.cacheDelay() * TimeUnit.valueOf(chatCacheTimeUnit()).value)
+            ).toEpochMilli())
                         &&
                         (this.chatList.isNotEmpty()))
         ) {
