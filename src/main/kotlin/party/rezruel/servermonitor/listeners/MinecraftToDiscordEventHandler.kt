@@ -53,19 +53,19 @@ class MinecraftToDiscordEventHandler(private val plugin: Monitor) : Listener {
     @EventHandler
     fun onAsyncPlayerChat(event: AsyncPlayerChatEvent) {
         if (event.player.isOnline) {
-            chatList.add("> **${event.player.name}**\n> ${event.message}")
+            chatList.add("> **${event.player.name}**\n> ${event.message}".replace("@", "@\u200b"))
         }
         this.sendToDiscord()
     }
 
     @EventHandler
     fun onPlayerLogin(event: PlayerLoginEvent) {
-        chatList.add("> **${event.player.name}**\n > Joined the server.")
+        chatList.add("> **${event.player.name}**\n > Joined the server.".replace("@", "@\u200b"))
     }
 
     @EventHandler
     fun onPlayerQuit(event: PlayerQuitEvent) {
-        chatList.add("> **${event.player.name}**\n> Left the server.")
+        chatList.add("> **${event.player.name}**\n> Left the server.".replace("@", "@\u200b"))
     }
 
     @EventHandler
