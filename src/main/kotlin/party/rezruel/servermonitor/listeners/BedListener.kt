@@ -31,7 +31,7 @@ class BedListener(private val plugin: Monitor) : Listener {
     }
 
     private fun dayNightCycleMaybe(world: World) {
-        if (inBedList[world]!!.size >= (plugin.server.getWorld(world.uid)!!.players!!.size / 2)) {
+        if (inBedList[world]!!.size >= (plugin.server.getWorld(world.uid)!!.players.size / 2)) {
             world.fullTime = 0
         }
     }
