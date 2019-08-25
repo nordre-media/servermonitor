@@ -104,7 +104,7 @@ class Monitor : JavaPlugin() {
         val onlinePlayers = server.onlinePlayers.size
         val offlinePlayers = server.offlinePlayers.size
         val tpsLastMinute = server.tps[0]
-        val serverName = server.serverName ?: "Server"
+        val serverName = "Server ||Apparently this was a non-standard property being exposed previously.||"
         val bannedPlayerCount = server.bannedPlayers.size
         val maxPlayers = server.maxPlayers
         val operators = server.operators.size
